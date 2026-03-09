@@ -5,6 +5,7 @@ import edu.eci.tdse.annotation.RequestParam;
 import edu.eci.tdse.annotation.RestController;
 import edu.eci.tdse.server.HttpRequest;
 import edu.eci.tdse.server.HttpServer;
+import java.net.URI;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -93,23 +94,24 @@ public class ComponentScanner {
 
 
     private static List<Class<?>> findControllers() throws Exception {
-        List<Class<?>> result = new ArrayList<>();
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    List<Class<?>> result = new ArrayList<>();
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        Enumeration<URL> roots = cl.getResources("");
-        while (roots.hasMoreElements()) {
-            URL url = roots.nextElement();
-            if ("file".equals(url.getProtocol())) {
-                File dir = new File(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8));
-                scanDirectory(dir, "", result, cl);
-            } else if ("jar".equals(url.getProtocol())) {
-                String jarPath = url.getPath();
-                jarPath = jarPath.substring(5, jarPath.indexOf('!'));
-                scanJar(jarPath, result, cl);
-            }
+    java.security.CodeSource cs = ComponentScanner.class
+            .getProtectionDomain().getCodeSource();
+
+    if (cs != null) {
+        String location = cs.getLocation().toURI().getPath();
+        File locationFile = new File(location);
+
+        if (locationFile.isFile() && location.endsWith(".jar")) {
+            scanJar(location, result, cl);
+        } else {
+            scanDirectory(locationFile, "", result, cl);
         }
-        return result;
     }
+    return result;
+}
 
     private static void scanDirectory(File dir, String packagePrefix,
                                       List<Class<?>> result, ClassLoader cl) {
