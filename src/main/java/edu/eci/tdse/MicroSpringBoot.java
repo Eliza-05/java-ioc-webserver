@@ -1,17 +1,27 @@
 package edu.eci.tdse;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class MicroSpringBoot {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import edu.eci.tdse.ioc.ComponentScanner;
+import edu.eci.tdse.server.HttpServer;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+
+public class MicroSpringBoot {
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("=== MicroSpringBoot IoC Framework ===");
+
+        if (args.length > 0) {
+            // Mode 1: explicit class name from command line
+            System.out.println("Mode: Explicit class registration");
+            for (String className : args) {
+                ComponentScanner.registerByName(className);
+            }
+        } else {
+            // Mode 2: auto-scan the classpath
+            System.out.println("Mode: Auto-scan classpath for @RestController components");
+            ComponentScanner.scanAndRegister();
         }
+
+        HttpServer.port(8080);
+        HttpServer.start();
     }
 }

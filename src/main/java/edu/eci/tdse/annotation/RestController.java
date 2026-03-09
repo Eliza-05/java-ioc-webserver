@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a class as a REST controller (web component).
+ * Marks a class as a REST controller
  * The IoC container scans for classes with this annotation
  * and automatically registers their endpoints.
  */

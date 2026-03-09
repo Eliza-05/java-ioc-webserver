@@ -8,12 +8,6 @@ import java.lang.annotation.Target;
 /**
  * Binds a method parameter to an HTTP query parameter.
  * If the query parameter is absent, defaultValue is used.
- *
- * Example:
- *   @GetMapping("/greeting")
- *   public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
- *       return "Hola " + name;
- *   }
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
